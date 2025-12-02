@@ -77,7 +77,7 @@ PKCS12CERTS := $(patsubst %-cert.pem, %.p12, $(RSACERTS) $(ECCERTS))
 SWTPM_STATEDIR := $(curdir)/tst/swtpm
 SWTPM_CTRLSOCK := $(curdir)/tst/swtpm-ctrl
 SWTPM_SERVSOCK := $(curdir)/tst/swtpm-serv
-SWTPM := swtpm socket --tpm2 --tpmstate dir=$(SWTPM_STATEDIR)
+SWTPM := swtpm socket --tpm2 --tpmstate dir=$(SWTPM_STATEDIR) --tpm2-max-sessions 10 --tpm2-max-contexts 10
 TABRMD_NAME := com.intel.tss2.Tabrmd2321
 
 # Annoyingly, while we only support UNIX socket, the ENGINE only supports TCP.
@@ -175,7 +175,6 @@ $(certsdir)/tpm-sw-rsa-81000001-sign-key.pem:
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
 		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001 && \
-		$(SWTPM_PREFIX) tpm2_flushcontext parent.ctx && \
 		rm -f parent.ctx; \
 	fi
 	$(SWTPM_PREFIX) tpm2_flushcontext -t
