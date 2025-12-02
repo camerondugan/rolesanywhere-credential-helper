@@ -49,7 +49,7 @@ jobs:
               ABRMD_PID=\$!
               sleep 2
 
-              # Export TPM env vars so they're inherited by all subprocesses
+              # Export TPM env vars
               export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
               export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
 
