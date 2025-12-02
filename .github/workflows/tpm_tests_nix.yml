@@ -55,7 +55,7 @@ jobs:
               # Run tests using abrmd
               make \
                 SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" \
-                START_SWTPM_TCP=\"\" \
+                START_SWTPM_TCP=\"true\" \
                 test-tpm-signer
 
               # Cleanup
