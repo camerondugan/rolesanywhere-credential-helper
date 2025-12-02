@@ -14,7 +14,7 @@ pkgs.mkShell {
 
   shellHook = ''
     export OPENSSL_MODULES=${pkgs.tpm2-openssl}/lib/ossl-modules
-    export PATH=${pkgs.tpm2-openssl}/bin:$PATH
     export LD_LIBRARY_PATH=${pkgs.tpm2-tss}/lib:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    export PATH=${pkgs.tpm2-openssl}/bin:$PATH
   '';
 }
