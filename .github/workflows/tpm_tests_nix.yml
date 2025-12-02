@@ -49,14 +49,13 @@ jobs:
               ABRMD_PID=\$!
               sleep 2
 
-              # Configure dictionary lockout
-              TPM2TOOLS_TCTI=tabrmd:bus_type=session tpm2_dictionarylockout -s -t 0
+              # Configure dictionary lockout and export env vars
+              export TPM2TOOLS_TCTI=tabrmd:bus_type=session
+              export TPM2OPENSSL_TCTI=tabrmd:bus_type=session
+              tpm2_dictionarylockout -s -t 0
 
               # Run tests using abrmd
-              make \
-                SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" \
-                START_SWTPM_TCP=\"true\" \
-                test-tpm-signer
+              make START_SWTPM_TCP=\"true\" test-tpm-signer
 
               # Cleanup
               kill \$ABRMD_PID 2>/dev/null || true
