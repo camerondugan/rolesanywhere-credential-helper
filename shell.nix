@@ -10,12 +10,12 @@ pkgs.mkShell {
     gnutls
     dbus
     tpm2-tss
+    openssl
+    tpm2-openssl
   ];
 
-  nativeBuildInputs = [ pkgs.tpm2-openssl ];
-
   shellHook = ''
-    export OPENSSL_MODULES=${pkgs.tpm2-openssl}/lib/ossl-modules
-    export LD_LIBRARY_PATH=${pkgs.tpm2-tss}/lib:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+    export OPENSSL_MODULES="${pkgs.tpm2-openssl}/lib/ossl-modules"
+    export LD_LIBRARY_PATH="${pkgs.tpm2-tss}/lib:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
   '';
 }
