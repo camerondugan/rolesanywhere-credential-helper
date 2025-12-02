@@ -2,6 +2,14 @@
 
 set -exuo pipefail
 
+# Export TPM and OpenSSL environment variables if they exist
+[ -n "${TPM2OPENSSL_TCTI:-}" ] && export TPM2OPENSSL_TCTI
+[ -n "${OPENSSL_MODULES:-}" ] && export OPENSSL_MODULES
+
+# Debug: print environment variables
+echo "TPM2OPENSSL_TCTI=${TPM2OPENSSL_TCTI:-<not set>}"
+echo "OPENSSL_MODULES=${OPENSSL_MODULES:-<not set>}"
+
 # This script will emulate the utility of the same name provided by James Bottomley
 # with his OpenSSL ENGINE, using utilities within tpm2-tools. Note that the options
 # in this script will be far more restricted than what Bottomley provides and may not
