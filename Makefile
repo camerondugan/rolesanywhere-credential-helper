@@ -150,7 +150,6 @@ $(certsdir)/tpm-sw-loaded-81000102-ec-secp384r1-key-with-pw.pem:
 # doesn't already exist. And a PEM key with that as its parent.
 $(certsdir)/tpm-sw-ec-81000001-key.pem:
 	$(START_SWTPM_TCP)
-	$(SWTPM_PREFIX) tpm2_evictcontrol -c 0x81000000 2>/dev/null || :
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
 		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001; \
@@ -159,8 +158,6 @@ $(certsdir)/tpm-sw-ec-81000001-key.pem:
 
 $(certsdir)/tpm-sw-ec-81000001-key-with-pw.pem:
 	$(START_SWTPM_TCP)
-	$(SWTPM_PREFIX) tpm2_flushcontext -t
-	$(SWTPM_PREFIX) tpm2_evictcontrol -c 0x81000000 2>/dev/null || :
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
 		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001; \
@@ -169,23 +166,17 @@ $(certsdir)/tpm-sw-ec-81000001-key-with-pw.pem:
 
 # Create RSA keys with the Sign capability
 $(certsdir)/tpm-sw-rsa-81000001-sign-key.pem:
-	$(SWTPM_PREFIX) tpm2_evictcontrol -c 0x81000000 2>/dev/null || :
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
-		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001 && \
-		rm -f parent.ctx; \
+		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001; \
 	fi
 	$(SWTPM_PREFIX) openssl genpkey -provider tpm2 -algorithm RSA -pkeyopt parent:0x81000001 -out $@
 
 $(certsdir)/tpm-sw-rsa-81000001-sign-key-with-pw.pem:
-	$(SWTPM_PREFIX) tpm2_flushcontext -t
-	$(SWTPM_PREFIX) tpm2_evictcontrol -c 0x81000000 2>/dev/null || :
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
-		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001 && \
-		rm -f parent.ctx; \
+		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001; \
 	fi
-	$(SWTPM_PREFIX) tpm2_flushcontext -t
 	$(SWTPM_PREFIX) openssl genpkey -provider tpm2 -algorithm RSA -pkeyopt parent:0x81000001 -pkeyopt user-auth:1234 -out $@
 
 SWTPM_LOADED_KEYS_WO_PW := $(certsdir)/tpm-sw-loaded-81000101-ec-secp384r1-key.pem
