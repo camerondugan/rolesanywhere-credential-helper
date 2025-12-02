@@ -49,17 +49,15 @@ jobs:
               ABRMD_PID=\$!
               sleep 2
 
-              # Configure dictionary lockout
-              TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session tpm2_dictionarylockout -s -t 0
+              # Export TPM env vars so they're inherited by all subprocesses
+              export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
+              export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
 
-              # Run tests with all vars passed as make variables
-              make \
-                START_SWTPM_TCP=\"true\" \
-                SWTPM_PREFIX=\"\" \
-                TPM2TOOLS_TCTI=\"tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session\" \
-                TPM2OPENSSL_TCTI=\"tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session\" \
-                OPENSSL_MODULES=\"\$OPENSSL_MODULES\" \
-                test-tpm-signer
+              # Configure dictionary lockout
+              tpm2_dictionarylockout -s -t 0
+
+              # Run tests
+              make START_SWTPM_TCP=\"true\" SWTPM_PREFIX=\"\" test-tpm-signer
 
               # Cleanup
               kill \$ABRMD_PID 2>/dev/null || true
