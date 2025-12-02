@@ -10,11 +10,13 @@ pkgs.mkShell {
     gnutls
     dbus
     tpm2-tss
-    openssl_3_0
+    openssl_3
     tpm2-openssl
   ];
 
   shellHook = ''
+    export TPM2_OPENSSL="${pkgs.tpm2-openssl}"
+    export TPM2_TSS="${pkgs.tpm2-tss}"
     export OPENSSL_MODULES="${pkgs.tpm2-openssl}/lib/ossl-modules"
     export LD_LIBRARY_PATH="${pkgs.tpm2-tss}/lib:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
   '';
