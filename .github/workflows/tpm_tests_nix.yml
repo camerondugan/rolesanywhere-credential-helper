@@ -44,6 +44,11 @@ jobs:
         run: |
           nix-shell --run '
             dbus-run-session -- bash -c "
+              TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
+              TPM2_TSS=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-tss)
+              export PATH=\$TPM2_OPENSSL/bin:\$PATH
+              export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
+              export LD_LIBRARY_PATH=\$TPM2_TSS/lib:\${LD_LIBRARY_PATH:-}
 
               rm -rf tst/swtpm
 
@@ -61,14 +66,9 @@ jobs:
               export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
               export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
 
-              # Verify env vars are set
-              echo \"TPM2TOOLS_TCTI=\$TPM2TOOLS_TCTI\"
-              echo \"TPM2OPENSSL_TCTI=\$TPM2OPENSSL_TCTI\"
-
-              # Check which openssl and verify provider
+              # Verify env vars
               echo \"Using openssl: \$(which openssl)\"
               echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
-              echo \"LD_LIBRARY_PATH=\$LD_LIBRARY_PATH\"
               echo \"Checking OpenSSL providers:\"
               openssl list -providers -verbose
 
