@@ -31,10 +31,11 @@ jobs:
 
       - name: Run TPM tests
         run: |
-          nix-shell -p go swtpm tpm2-tools tpm2-abrmd tpm2-openssl openssl softhsm gnutls dbus --run '
+          nix-shell -p go swtpm tpm2-tools tpm2-abrmd tpm2-openssl softhsm gnutls dbus --run '
             dbus-run-session -- bash -c "
-              export OPENSSL_MODULES=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)/lib/ossl-modules
-              ls -la \$OPENSSL_MODULES/
+              TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
+              export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
+              export PATH=\$TPM2_OPENSSL/bin:\$PATH
               make SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" test-tpm-signer
             "
           '
