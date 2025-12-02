@@ -34,8 +34,10 @@ jobs:
           nix-shell -p go swtpm tpm2-tools tpm2-abrmd tpm2-openssl softhsm gnutls dbus --run '
             dbus-run-session -- bash -c "
               TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
+              TPM2_TSS=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-tss)
               export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
               export PATH=\$TPM2_OPENSSL/bin:\$PATH
+              export LD_LIBRARY_PATH=\$TPM2_TSS/lib:\${LD_LIBRARY_PATH:-}
 
               rm -rf tst/swtpm
 
