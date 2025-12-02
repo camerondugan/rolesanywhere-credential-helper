@@ -34,8 +34,6 @@ jobs:
           nix-shell -p go swtpm tpm2-tools tpm2-abrmd tpm2-openssl openssl softhsm gnutls dbus --run '
             dbus-run-session -- bash -c "
               export OPENSSL_MODULES=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)/lib/ossl-modules
-              export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session
-              export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session
-              make test-tpm-signer
+              make SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" test-tpm-signer
             "
           '
