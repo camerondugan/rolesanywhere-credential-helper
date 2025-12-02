@@ -68,12 +68,17 @@ jobs:
 
               # Verify env vars
               echo \"Using openssl: \$(which openssl)\"
+              echo \"PATH=\$PATH\"
               echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
               echo \"Checking OpenSSL providers:\"
               openssl list -providers -verbose
 
               # Configure dictionary lockout
               tpm2_dictionarylockout -s -t 0
+
+              # Verify PATH right before make
+              echo \"PATH before make: \$PATH\"
+              echo \"which openssl before make: \$(which openssl)\"
 
               # Run tests
               make START_SWTPM_TCP=\"true\" SWTPM_PREFIX=\"\" test-tpm-signer
