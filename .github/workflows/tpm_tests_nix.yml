@@ -27,4 +27,4 @@ jobs:
             softhsm \
             gnutls \
             dbus \
-            --run 'eval $(dbus-launch --sh-syntax) && export OPENSSL_MODULES=$(nix-build --no-out-link "<nixpkgs>" -A tpm2-openssl)/lib/ossl-modules && make test-tpm-signer'
+            --run 'eval $(dbus-launch --sh-syntax) && export OPENSSL_MODULES=$(nix-build --no-out-link "<nixpkgs>" -A tpm2-openssl)/lib/ossl-modules && export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session && export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session && make test-tpm-signer'
