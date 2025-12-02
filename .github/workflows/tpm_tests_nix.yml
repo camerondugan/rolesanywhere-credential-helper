@@ -46,7 +46,8 @@ jobs:
             dbus-run-session -- bash -c "
               TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
               TPM2_TSS=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-tss)
-              export PATH=\$TPM2_OPENSSL/bin:\$PATH
+              OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A openssl)
+              export PATH=\$OPENSSL/bin:\$PATH
               export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
               export LD_LIBRARY_PATH=\$TPM2_TSS/lib:\${LD_LIBRARY_PATH:-}
 
@@ -59,7 +60,6 @@ jobs:
 
               # Start tpm2-abrmd resource manager
               tpm2-abrmd --tcti=swtpm:host=localhost,port=2321 --allow-root --session --flush-all &
-              ABRMD_PID=\$!
               sleep 2
 
               # Export TPM env vars
