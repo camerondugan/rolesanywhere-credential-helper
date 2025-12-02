@@ -45,38 +45,6 @@ jobs:
           nix-shell --run '
             dbus-run-session -- bash -c "
               rm -rf tst/swtpm
-
-              # Start swtpm
-              mkdir -p \$(pwd)/tst/swtpm
-              swtpm socket --tpm2 --tpmstate dir=\$(pwd)/tst/swtpm --server type=tcp,port=2321 --ctrl type=tcp,port=2322 --flags not-need-init,startup-clear -d
-              sleep 1
-
-              # Start tpm2-abrmd resource manager
-              tpm2-abrmd --tcti=swtpm:host=localhost,port=2321 --allow-root --session --flush-all &
-              sleep 2
-
-              # Export TPM env vars
-              export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
-              export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
-
-              # Verify provider module exists
-              echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
-              ls -la \$OPENSSL_MODULES/
-
-              # Verify env vars
-              echo \"Using openssl: \$(which openssl)\"
-              echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
-              echo \"Checking OpenSSL providers:\"
-              openssl list -providers -verbose
-
-              # Configure dictionary lockout
-              tpm2_dictionarylockout -s -t 0
-
-              # Verify PATH right before make
-              echo \"PATH before make: \$PATH\"
-              echo \"which openssl before make: \$(which openssl)\"
-
-              # Run tests
-              make START_SWTPM_TCP=\"true\" SWTPM_PREFIX=\"\" test-tpm-signer
+              make test-tpm-signer
             "
           '
