@@ -39,9 +39,26 @@ jobs:
 
               rm -rf tst/swtpm
 
+              # Start swtpm
+              mkdir -p \$(pwd)/tst/swtpm
+              swtpm socket --tpm2 --tpmstate dir=\$(pwd)/tst/swtpm --server type=tcp,port=2321 --ctrl type=tcp,port=2322 --flags not-need-init,startup-clear -d
+              sleep 1
+
+              # Start tpm2-abrmd resource manager
+              tpm2-abrmd --tcti=swtpm:host=localhost,port=2321 --allow-root --session --flush-all &
+              ABRMD_PID=\$!
+              sleep 2
+
+              # Configure dictionary lockout
+              TPM2TOOLS_TCTI=tabrmd:bus_type=session tpm2_dictionarylockout -s -t 0
+
+              # Run tests using abrmd
               make \
-                SWTPM_PREFIX=\"TPM2TOOLS_TCTI=swtpm:host=localhost,port=2321 TPM2OPENSSL_TCTI=swtpm:host=localhost,port=2321 OPENSSL_MODULES=\$OPENSSL_MODULES\" \
-                START_SWTPM_TCP=\"if ! swtpm_ioctl --tcp 127.0.0.1:2322 -g >/dev/null 2>/dev/null; then mkdir -p \$(pwd)/tst/swtpm; swtpm socket --tpm2 --tpmstate dir=\$(pwd)/tst/swtpm --server type=tcp,port=2321 --ctrl type=tcp,port=2322 --flags not-need-init,startup-clear --tpm2-max-sessions 10 --tpm2-max-contexts 10 -d; sleep 1; TPM2TOOLS_TCTI=swtpm:host=localhost,port=2321 TPM2OPENSSL_TCTI=swtpm:host=localhost,port=2321 OPENSSL_MODULES=\$OPENSSL_MODULES tpm2_dictionarylockout -s -t 0; fi\" \
+                SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" \
+                START_SWTPM_TCP=\"\" \
                 test-tpm-signer
+
+              # Cleanup
+              kill \$ABRMD_PID 2>/dev/null || true
             "
           '

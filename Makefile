@@ -77,7 +77,7 @@ PKCS12CERTS := $(patsubst %-cert.pem, %.p12, $(RSACERTS) $(ECCERTS))
 SWTPM_STATEDIR := $(curdir)/tst/swtpm
 SWTPM_CTRLSOCK := $(curdir)/tst/swtpm-ctrl
 SWTPM_SERVSOCK := $(curdir)/tst/swtpm-serv
-SWTPM := swtpm socket --tpm2 --tpmstate dir=$(SWTPM_STATEDIR) --tpm2-max-sessions 10 --tpm2-max-contexts 10
+SWTPM := swtpm socket --tpm2 --tpmstate dir=$(SWTPM_STATEDIR)
 TABRMD_NAME := com.intel.tss2.Tabrmd2321
 
 # Annoyingly, while we only support UNIX socket, the ENGINE only supports TCP.
@@ -150,7 +150,6 @@ $(certsdir)/tpm-sw-loaded-81000102-ec-secp384r1-key-with-pw.pem:
 # doesn't already exist. And a PEM key with that as its parent.
 $(certsdir)/tpm-sw-ec-81000001-key.pem:
 	$(START_SWTPM_TCP)
-	$(SWTPM_PREFIX) tpm2_flushcontext -t
 	$(SWTPM_PREFIX) tpm2_evictcontrol -c 0x81000000 2>/dev/null || :
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
@@ -170,14 +169,12 @@ $(certsdir)/tpm-sw-ec-81000001-key-with-pw.pem:
 
 # Create RSA keys with the Sign capability
 $(certsdir)/tpm-sw-rsa-81000001-sign-key.pem:
-	$(SWTPM_PREFIX) tpm2_flushcontext -t
 	$(SWTPM_PREFIX) tpm2_evictcontrol -c 0x81000000 2>/dev/null || :
 	if ! $(SWTPM_PREFIX) tpm2_readpublic -c 0x81000001; then \
 		$(SWTPM_PREFIX) tpm2_createprimary -G rsa -c parent.ctx && \
 		$(SWTPM_PREFIX) tpm2_evictcontrol -c parent.ctx 0x81000001 && \
 		rm -f parent.ctx; \
 	fi
-	$(SWTPM_PREFIX) tpm2_flushcontext -t
 	$(SWTPM_PREFIX) openssl genpkey -provider tpm2 -algorithm RSA -pkeyopt parent:0x81000001 -out $@
 
 $(certsdir)/tpm-sw-rsa-81000001-sign-key-with-pw.pem:
