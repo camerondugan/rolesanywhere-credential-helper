@@ -18,6 +18,6 @@ pkgs.mkShell {
     export TPM2_OPENSSL="${pkgs.tpm2-openssl}"
     export TPM2_TSS="${pkgs.tpm2-tss}"
     export OPENSSL_MODULES="${pkgs.tpm2-openssl}/lib/ossl-modules"
-    export LD_LIBRARY_PATH="${pkgs.tpm2-tss}/lib:${pkgs.tpm2-abrmd}/lib:${pkgs.tpm2-openssl}/lib:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+    export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [ pkgs.tpm2-tss pkgs.tpm2-abrmd pkgs.tpm2-openssl ]}:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
   '';
 }
