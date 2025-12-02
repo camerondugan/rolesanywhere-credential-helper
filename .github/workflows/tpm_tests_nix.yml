@@ -36,6 +36,6 @@ jobs:
               TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
               export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
               export PATH=\$TPM2_OPENSSL/bin:\$PATH
-              make SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" test-tpm-signer
+              make SWTPM_PREFIX=\"TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES\" START_SWTPM_TCP=\"if ! swtpm_ioctl --tcp 127.0.0.1:2322 -g >/dev/null 2>/dev/null; then mkdir -p \$(pwd)/tst/swtpm; swtpm socket --tpm2 --tpmstate dir=\$(pwd)/tst/swtpm --server type=tcp,port=2321 --ctrl type=tcp,port=2322 --flags not-need-init,startup-clear -d; ( tpm2-abrmd --session --dbus-name=com.intel.tss2.Tabrmd2321 --tcti swtpm:host=localhost,port=2321 & ); sleep 2; TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd2321,bus_type=session OPENSSL_MODULES=\$OPENSSL_MODULES tpm2_dictionarylockout -s -t 0; fi\" test-tpm-signer
             "
           '
