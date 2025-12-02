@@ -15,6 +15,17 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-25.11
 
+      - name: Cache nix store
+        uses: actions/cache@v4
+        with:
+          path: /nix/store
+          key: nix-${{ runner.os }}-${{ hashFiles('shell.nix') }}
+          restore-keys: |
+            nix-${{ runner.os }}-
+
+      - name: Build nix environment
+        run: nix-shell --run "echo 'Environment ready'"
+
       - name: Setup dbus config
         run: |
           sudo mkdir -p /etc/dbus-1
@@ -31,13 +42,8 @@ jobs:
 
       - name: Run TPM tests
         run: |
-          nix-shell -p go swtpm tpm2-tools tpm2-abrmd tpm2-openssl softhsm gnutls dbus --run '
+          nix-shell --run '
             dbus-run-session -- bash -c "
-              TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
-              TPM2_TSS=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-tss)
-              export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
-              export PATH=\$TPM2_OPENSSL/bin:\$PATH
-              export LD_LIBRARY_PATH=\$TPM2_TSS/lib:\${LD_LIBRARY_PATH:-}
 
               rm -rf tst/swtpm
 
@@ -58,8 +64,6 @@ jobs:
               # Verify env vars are set
               echo \"TPM2TOOLS_TCTI=\$TPM2TOOLS_TCTI\"
               echo \"TPM2OPENSSL_TCTI=\$TPM2OPENSSL_TCTI\"
-              echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
-              echo \"LD_LIBRARY_PATH=\$LD_LIBRARY_PATH\"
 
               # Check if provider is available
               echo \"Checking OpenSSL providers:\"
