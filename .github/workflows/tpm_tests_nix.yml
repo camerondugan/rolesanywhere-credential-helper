@@ -26,4 +26,4 @@ jobs:
             openssl \
             softhsm \
             gnutls \
-            --run "make test-tpm-signer"
+            --run 'export OPENSSL_MODULES=$(nix-build --no-out-link "<nixpkgs>" -A tpm2-openssl)/lib/ossl-modules && make test-tpm-signer'
