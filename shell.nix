@@ -10,7 +10,7 @@ pkgs.mkShell {
     gnutls
     dbus
     tpm2-tss
-    openssl
+    openssl_3_0
     tpm2-openssl
   ];
 

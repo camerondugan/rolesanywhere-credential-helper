@@ -46,7 +46,7 @@ jobs:
             dbus-run-session -- bash -c "
               TPM2_OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-openssl)
               TPM2_TSS=\$(nix-build --no-out-link \"<nixpkgs>\" -A tpm2-tss)
-              OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A openssl)
+              OPENSSL=\$(nix-build --no-out-link \"<nixpkgs>\" -A openssl_3_0)
               export PATH=\$OPENSSL/bin:\$PATH
               export OPENSSL_MODULES=\$TPM2_OPENSSL/lib/ossl-modules
               export LD_LIBRARY_PATH=\$TPM2_TSS/lib:\${LD_LIBRARY_PATH:-}
