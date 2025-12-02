@@ -59,6 +59,11 @@ jobs:
               echo \"TPM2TOOLS_TCTI=\$TPM2TOOLS_TCTI\"
               echo \"TPM2OPENSSL_TCTI=\$TPM2OPENSSL_TCTI\"
               echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
+              echo \"LD_LIBRARY_PATH=\$LD_LIBRARY_PATH\"
+
+              # Check if provider is available
+              echo \"Checking OpenSSL providers:\"
+              openssl list -providers -verbose
 
               # Configure dictionary lockout
               tpm2_dictionarylockout -s -t 0
