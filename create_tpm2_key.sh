@@ -2,14 +2,14 @@
 
 set -exuo pipefail
 
-# This script will emulate the utility of the same name provided by James Bottomley 
-# with his OpenSSL ENGINE, using utilities within tpm2-tools. Note that the options 
-# in this script will be far more restricted than what Bottomley provides and may not 
-# handle errors gracefully. While you may use this script to generate your own keys, 
-# it isn't recommended (you may want to consider installing Bottomley's OpenSSL ENGINE 
-# and using the utility tools that come with it instead, because, if nothing else, they 
-# are better documented). The primary purpose for this script in this codebase is for 
-# unit testing. 
+# This script will emulate the utility of the same name provided by James Bottomley
+# with his OpenSSL ENGINE, using utilities within tpm2-tools. Note that the options
+# in this script will be far more restricted than what Bottomley provides and may not
+# handle errors gracefully. While you may use this script to generate your own keys,
+# it isn't recommended (you may want to consider installing Bottomley's OpenSSL ENGINE
+# and using the utility tools that come with it instead, because, if nothing else, they
+# are better documented). The primary purpose for this script in this codebase is for
+# unit testing.
 
 ecc_curve=""
 rsa_key=false
@@ -71,6 +71,9 @@ tpm2_createprimary \
 
 # Make the primary available at a persistent handle
 PRIMARY_HANDLE=$(tpm2_evictcontrol -c primary.ctx | cut -d ' ' -f 2 | head -n 1)
+
+# Flush transient objects to free TPM memory
+tpm2_flushcontext -t
 
 if [ -z "$ecc_curve" ]; then # RSA key
   # Create child key with the appropriate attributes (no sign attribute)
