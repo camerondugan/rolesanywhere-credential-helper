@@ -6,15 +6,16 @@ pkgs.mkShell {
     swtpm
     tpm2-tools
     tpm2-abrmd
-    tpm2-openssl
     softhsm
     gnutls
     dbus
+    tpm2-tss
   ];
+
+  nativeBuildInputs = [ pkgs.tpm2-openssl ];
 
   shellHook = ''
     export OPENSSL_MODULES=${pkgs.tpm2-openssl}/lib/ossl-modules
     export LD_LIBRARY_PATH=${pkgs.tpm2-tss}/lib:''${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
-    export PATH=${pkgs.tpm2-openssl}/bin:$PATH
   '';
 }
