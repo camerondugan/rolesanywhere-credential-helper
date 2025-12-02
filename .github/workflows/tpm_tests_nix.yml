@@ -53,13 +53,15 @@ jobs:
               export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
               export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
 
+              # Verify env vars are set
+              echo \"TPM2TOOLS_TCTI=\$TPM2TOOLS_TCTI\"
+              echo \"TPM2OPENSSL_TCTI=\$TPM2OPENSSL_TCTI\"
+              echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
+
               # Configure dictionary lockout
               tpm2_dictionarylockout -s -t 0
 
               # Run tests
               make START_SWTPM_TCP=\"true\" SWTPM_PREFIX=\"\" test-tpm-signer
-
-              # Cleanup
-              kill \$ABRMD_PID 2>/dev/null || true
             "
           '
