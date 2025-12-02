@@ -59,9 +59,9 @@ jobs:
               export TPM2TOOLS_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
               export TPM2OPENSSL_TCTI=tabrmd:bus_name=com.intel.tss2.Tabrmd,bus_type=session
 
-              # Debug tpm2-openssl package structure
-              echo \"Contents of \$TPM2_OPENSSL/bin:\"
-              ls -la \$TPM2_OPENSSL/bin/ || echo \"No bin directory\"
+              # Verify provider module exists
+              echo \"OPENSSL_MODULES=\$OPENSSL_MODULES\"
+              ls -la \$OPENSSL_MODULES/
 
               # Verify env vars
               echo \"Using openssl: \$(which openssl)\"
