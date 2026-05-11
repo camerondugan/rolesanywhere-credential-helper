@@ -1,6 +1,6 @@
 module github.com/aws/rolesanywhere-credential-helper
 
-go 1.26.0
+go 1.26.3
 
 toolchain go1.26.3
 
