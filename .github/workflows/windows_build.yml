@@ -2,6 +2,7 @@ name: Windows build and test rolesanywhere-credential-helper
 
 on:
   push:
+    branches: [ main ]
   pull_request:
 
 concurrency:

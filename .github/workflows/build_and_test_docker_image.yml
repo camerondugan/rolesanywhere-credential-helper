@@ -2,6 +2,7 @@ name: Build and Test Credential Helper Docker Image
 
 on:
   push:
+    branches: [ main ]
   pull_request:
 
 concurrency:
