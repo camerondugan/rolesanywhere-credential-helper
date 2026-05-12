@@ -80,19 +80,20 @@ jobs:
             ${{ env.STAGING_REGISTRY }}/${{ env.STAGING_REPOSITORY }}:${{ github.sha }}-${{ matrix.platform }}
           provenance: false # provenance must be disabled in order to prevent manifest creation failures
 
-      - name: Verify image runs (PR only)
-        if: github.event_name == 'pull_request'
+      - name: Verify image runs
+        if: "!(github.event_name == 'push' && github.repository == 'aws/rolesanywhere-credential-helper')"
         run: |
           docker run --rm "${{ env.STAGING_REGISTRY }}/${{ env.STAGING_REPOSITORY }}:${{ github.sha }}-${{ matrix.platform }}" version
 
       - name: Install Trivy Image Scanner
+        if: "!(github.event_name == 'push' && github.repository == 'aws/rolesanywhere-credential-helper')"
         uses: aquasecurity/setup-trivy@7483281e2107e7eecac919ed9d4f5ce2d89e4614 # v0.2.0
         with:
           cache: true
           version: v0.69.3
 
       - name: Scan Docker image with Trivy
-        if: github.event_name == 'pull_request'
+        if: "!(github.event_name == 'push' && github.repository == 'aws/rolesanywhere-credential-helper')"
         run: |
           IMAGE_REFERENCE="${{ env.STAGING_REGISTRY }}/${{ env.STAGING_REPOSITORY }}:${{ github.sha }}-${{ matrix.platform }}"
           ./docker_image_resources/tests/scripts/scan-image.sh "$IMAGE_REFERENCE"
