@@ -174,3 +174,4 @@ jobs:
         run: |
           IMAGE_REFERENCE="${{ env.STAGING_REGISTRY }}/${{ env.STAGING_REPOSITORY }}:${{ github.sha }}-${{matrix.platform}}"
           ./docker_image_resources/tests/scripts/scan-image.sh "$IMAGE_REFERENCE"
+
