@@ -2,9 +2,11 @@ name: Build and Test Credential Helper Docker Image
 
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   STAGING_REGISTRY: 264252446756.dkr.ecr.us-east-1.amazonaws.com
