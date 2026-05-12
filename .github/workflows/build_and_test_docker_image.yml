@@ -51,7 +51,15 @@ jobs:
         run: |
           VERSION=$(grep '^VERSION=' Makefile | cut -d'=' -f2)
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Extracted version: $VERSION"
+
+      - name: Extract Go version from go.mod
+        id: go-version
+        run: |
+          GO_VERSION=$(grep '^toolchain' go.mod | awk '{print $2}' | sed 's/go//')
+          if [ -z "$GO_VERSION" ]; then
+            GO_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
+          fi
+          echo "version=${GO_VERSION}" >> "$GITHUB_OUTPUT"
 
       # push=true outputs to registry (--output=type=registry)
       # load=true outputs to local daemon only (--output=type=docker)
@@ -67,6 +75,7 @@ jobs:
           load: ${{ github.event_name == 'pull_request' }}
           build-args: |
             VERSION=${{ steps.extract-version.outputs.version }}
+            GO_VERSION=${{ steps.go-version.outputs.version }}
           tags: |
             ${{ env.STAGING_REGISTRY }}/${{ env.STAGING_REPOSITORY }}:${{ github.sha }}-${{ matrix.platform }}
           provenance: false # provenance must be disabled in order to prevent manifest creation failures

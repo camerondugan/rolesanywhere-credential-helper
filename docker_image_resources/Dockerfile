@@ -5,7 +5,7 @@ FROM --platform=$TARGETPLATFORM public.ecr.aws/amazonlinux/amazonlinux:2023.11.2
 # Add build arguments
 ARG TARGETARCH
 ARG VERSION
-ARG GO_VERSION=1.26.3
+ARG GO_VERSION
 
 # Install build dependencies
 RUN dnf install -y \
