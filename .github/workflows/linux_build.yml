@@ -38,10 +38,7 @@ jobs:
         id: go-version
         run: |
           GO_VERSION=$(grep '^toolchain' go.mod | awk '{print $2}' | sed 's/go//')
-          if [ -z "$GO_VERSION" ]; then
-            GO_VERSION=$(grep '^go ' go.mod | awk '{print $2}')
-          fi
-          echo "version=${GO_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version=${GO_VERSION}" >> $GITHUB_OUTPUT
       
       - name: Build Docker image
         run: |
