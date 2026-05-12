@@ -71,8 +71,8 @@ jobs:
           context: .
           file: ./docker_image_resources/Dockerfile
           platforms: linux/${{ matrix.platform }}
-          push: ${{ github.event_name == 'push' }}
-          load: ${{ github.event_name == 'pull_request' }}
+          push: ${{ github.event_name == 'push' && github.repository == 'aws/rolesanywhere-credential-helper' }}
+          load: ${{ !(github.event_name == 'push' && github.repository == 'aws/rolesanywhere-credential-helper') }}
           build-args: |
             VERSION=${{ steps.extract-version.outputs.version }}
             GO_VERSION=${{ steps.go-version.outputs.version }}
