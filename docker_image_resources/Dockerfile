@@ -9,7 +9,7 @@ ARG GO_VERSION=1.26.2
 
 # Install build dependencies
 RUN dnf install -y \
-    golang-1.24.9-1.amzn2023.0.1 \
+    golang-1.25.9-1.amzn2023.0.1 \
     make \
     && dnf clean all
 
